@@ -1,12 +1,15 @@
 package gui;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 
 public class RuleController {
-
+	GUIManager manager = GUIManager.getInstance();
+	GUIListener listener = manager.listener;
 	//Toggle Group
 	public ToggleGroup Round;
 	public ToggleGroup Pass;
@@ -17,16 +20,31 @@ public class RuleController {
 	public RadioButton radio2;
 	public RadioButton radio3;
 	public RadioButton radio4;
+	//Button
+	public Button startButton;
+
+	/**ゲーム開始ボタンを押せるようにするメソッド*/
+	public void changeButton(boolean able){
+		Platform.runLater(() -> {
+			startButton.setDisable(!able);
+			System.out.println("ChangeStartableButton!");
+		});
+	}
 
 	@FXML
 	protected void okButtonAction(ActionEvent e){
 		System.out.println("ok");
-		System.out.println(Round.getSelectedToggle());
-		System.out.println(Pass.getSelectedToggle());
-		System.out.println(Joker.getSelectedToggle());
-		System.out.println(Tunnel.getSelectedToggle());
+		int round = Integer.valueOf((String) Round.getSelectedToggle().getUserData());
+		int pass = Integer.valueOf((String) Pass.getSelectedToggle().getUserData());
+		boolean joker = Boolean.valueOf((String) Joker.getSelectedToggle().getUserData());
+		boolean tunnel = Boolean.valueOf((String) Tunnel.getSelectedToggle().getUserData());
+		System.out.println(round);
+		System.out.println(pass);
+		System.out.println(joker);
+		System.out.println(tunnel);
 
-		Main.manager.nextScene("Wait.fxml");
+		if(listener != null) listener.registarRule(round, pass, joker, tunnel);
+		//manager.nextScene("play.fxml");
 	}
 
 	@FXML
@@ -37,4 +55,5 @@ public class RuleController {
 		radio3.setSelected(true);
 		radio4.setSelected(true);
 	}
+
 }
